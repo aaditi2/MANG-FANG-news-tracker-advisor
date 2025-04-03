@@ -10,11 +10,11 @@ This News Strategizer is an AI-powered assistant that helps generate strategic s
 
 ## 🚀 Features
 
-- **Live Competitor News** – Fetches real-time news using online APIs.
-- **Company-Aware Suggestions** – Uses custom prompt engineering to tailor recommendations
-- **LLM Powered** – Leverages LLaMA 3 via open source API for high-quality insights
-- **Industry-Agnostic** – Works across any industry; not limited to tech
-- **Command-Line Tool** – Simple to run with customizable company input
+- **Live Competitor News:-** Fetches real-time news using online APIs.
+- **Company-Aware Suggestions:-** Uses custom prompt engineering to tailor recommendations
+- **LLM Powered:-** Leverages LLaMA 3 via open source API for high-quality insights
+- **Industry-Agnostic:-** Works across any industry; not limited to tech
+- **Command-Line Tool:-** Simple to run with customizable company input
 
 ---
 
