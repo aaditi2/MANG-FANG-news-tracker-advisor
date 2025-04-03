@@ -30,9 +30,19 @@ This News Strategizer is an AI-powered assistant that helps generate strategic s
 
 ## ⚙️ Setup & Installation
 
+
 ```bash
 git clone https://github.com/aaditi2/news-strategizer.git
 cd news-strategizer
 python -m venv .venv
 source .venv/bin/activate  # or .venv\Scripts\activate on Windows
 pip install -r requirements.txt
+```
+## Output pictures
+
+![output2](https://github.com/user-attachments/assets/5cea4e59-1b7e-4e13-9c21-b79954863a19)
+
+![net_and_google_output](https://github.com/user-attachments/assets/4cad0956-24d5-4be8-92ec-9357b032d071)
+
+
+
