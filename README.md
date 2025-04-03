@@ -1,4 +1,4 @@
-# Company news tracker and advisor
+# GenAI based Company news tracker and advisor
 
 
 ![Made with](https://img.shields.io/badge/Made%20with-Python%20%26%20LLMs-blue)
