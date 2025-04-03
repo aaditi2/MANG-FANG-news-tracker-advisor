@@ -1,6 +1,6 @@
 # Company news tracker and advisor
 
-![GitHub stars](https://img.shields.io/github/stars/aaditi2/news-strategizer?style=social)
+
 ![Made with](https://img.shields.io/badge/Made%20with-Python%20%26%20LLMs-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
