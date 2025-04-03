@@ -3,16 +3,15 @@ from agents import fetch_rival_news
 from prompts import strategy_prompt
 import requests
 
-def generate_news_summary_and_strategy(company_name):
+def generate_news_summary_and_strategy(company_name, all_news_dict):
     companies = ["Meta", "Apple", "Netflix", "Google", "Amazon", "Microsoft"]
     rivals = [c for c in companies if c.lower() != company_name.lower()]
 
-    # 1. Fetch & format news for all rivals
+    # 1. Fetch & format news for rivals using all_news_dict
     formatted_rival_news = ""
     for rival in rivals:
-        news_items = fetch_rival_news(rival)
-        if news_items:
-            formatted_rival_news += f"🔹 {rival}:\n{news_items}\n\n"
+        news_items = all_news_dict.get(rival, "No news found.")
+        formatted_rival_news += f"🔹 {rival}:\n{news_items}\n\n"
 
     # 2. Build prompt
     prompt = strategy_prompt(company_name, formatted_rival_news)
@@ -41,6 +40,6 @@ def generate_news_summary_and_strategy(company_name):
 
     if response.status_code == 200:
         reply = response.json()['choices'][0]['message']['content']
-        return f"📊 {company_name} Strategy Brief\n\n{formatted_rival_news}\n{reply}"
+        return reply
     else:
         return f"⚠️ Error from Together API: {response.text}"
