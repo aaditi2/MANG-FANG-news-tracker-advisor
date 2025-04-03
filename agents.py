@@ -10,7 +10,7 @@ def fetch_rival_news(company_name):
     params = {
         "q": f"{company_name} latest news",
         "api_key": serpapi_key,
-        "engine": "google_news",  
+        "engine": "google_news",
         "hl": "en",
         "gl": "us",
         "num": 5
@@ -21,14 +21,15 @@ def fetch_rival_news(company_name):
     if response.status_code != 200:
         return f"⚠️ Failed to fetch news for {company_name}"
 
-    results = response.json().get("articles", [])
+    results = response.json().get("news_results", [])
+
     if not results:
         return "No news found."
 
+    # Just return titles, no links
     headlines = []
     for item in results[:5]:
-        title = item.get("title", "")
-        link = item.get("link", "")
-        headlines.append(f"- {title}\n  {link}")
+        title = item.get("title", "No title")
+        headlines.append(f"- {title}")
 
     return "\n".join(headlines)

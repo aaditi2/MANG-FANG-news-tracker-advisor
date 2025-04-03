@@ -10,7 +10,9 @@ def main():
 
     for company in companies:
         print(f"\n📊 {company} Strategy Brief\n")
-        print(generate_news_summary_and_strategy(company))
+        output = generate_news_summary_and_strategy(company)
+        print(output)
+        print("\n" + "="*100 + "\n")  # Optional divider between companies
 
 if __name__ == "__main__":
     main()
