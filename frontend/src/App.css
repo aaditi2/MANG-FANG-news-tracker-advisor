@@ -1,0 +1,30 @@
+.app-container {
+  max-width: 900px;
+  margin: auto;
+  padding: 2rem;
+  font-family: sans-serif;
+}
+
+.controls {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.section {
+  margin-top: 1.5rem;
+  background-color: #f4f4f4;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
