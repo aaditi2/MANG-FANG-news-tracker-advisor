@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import axios from 'axios';
 
 function App() {
-  const [selectedCompany, setSelectedCompany] = useState('Apple');
+  const [selectedCompany, setSelectedCompany] = useState('Google');
   const [newsType, setNewsType] = useState('Top');
-  const [timeRange, setTimeRange] = useState('Past Day');
+  const [timeRange, setTimeRange] = useState('Today');
   const [news, setNews] = useState([]);
   const [suggestions, setSuggestions] = useState('');
   const [loading, setLoading] = useState(false);
@@ -87,13 +87,37 @@ function App() {
                 borderRadius: "8px",
                 borderLeft: "5px solid #333"
               }}>
-                <strong>{item.company}</strong>: {item.title}
-                <a href={item.link} target="_blank" rel="noopener noreferrer" title="Open news article">
-                  <svg className="link-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M10 13a5 5 0 0 0 7.07 0l3.54-3.54a5 5 0 0 0-7.07-7.07L12 4" />
-                    <path d="M14 11a5 5 0 0 0-7.07 0L3.39 14.46a5 5 0 0 0 7.07 7.07L12 20" />
-                  </svg>
-                </a>
+                <div>
+                  <span style={{ color: '#6a1b9a', fontWeight: '600' }}>{item.company}:</span>{" "}
+                  <a
+                    href={item.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ fontWeight: "bold", color: "#333", textDecoration: "none" }}
+                  >
+                    {item.title}
+                  </a>
+                  <a href={item.link} target="_blank" rel="noopener noreferrer" title="Open news article">
+                    <svg
+                      style={{ marginLeft: '6px', verticalAlign: 'middle' }}
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="blue"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M10 13a5 5 0 0 0 7.07 0l3.54-3.54a5 5 0 0 0-7.07-7.07L12 4" />
+                      <path d="M14 11a5 5 0 0 0-7.07 0L3.39 14.46a5 5 0 0 0 7.07 7.07L12 20" />
+                    </svg>
+                  </a>
+                </div>
+                <div style={{ fontStyle: 'italic', fontSize: '14px', marginTop: '4px' }}>
+                  {item.snippet}
+                </div>
               </div>
             ))}
           </div>

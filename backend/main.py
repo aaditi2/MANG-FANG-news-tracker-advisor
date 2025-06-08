@@ -3,6 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 import requests
 import os
+from collections import defaultdict
+import time
 
 # Load environment variables
 load_dotenv(dotenv_path="../.env")
@@ -24,7 +26,6 @@ app.add_middleware(
 )
 
 def detect_company(article: dict) -> str:
-    """Checks title + snippet + link for company name match."""
     text = f"{article.get('title', '')} {article.get('snippet', '')} {article.get('link', '')}".lower()
     for name in MANG_FANG_COMPETITORS:
         if name.lower() in text:
@@ -32,11 +33,7 @@ def detect_company(article: dict) -> str:
     return "Unknown"
 
 @app.get("/get_news/{company}")
-def get_news(company: str, category: str = Query("Top"), timeframe: str = Query("Past Day")):
-    # Remove selected company from competitors
-    competitors = [c for c in MANG_FANG_COMPETITORS if c.lower() != company.lower()]
-
-    # Optional category and time filters
+def get_news(company: str, category: str = Query("Top"), timeframe: str = Query("Today")):
     category_keywords = {
         "Top": "",
         "Tech": "technology",
@@ -45,7 +42,7 @@ def get_news(company: str, category: str = Query("Top"), timeframe: str = Query(
     }
 
     time_map = {
-        "Today": "t",
+        "Today": "d",
         "Past Week": "w",
         "Past Month": "m"
     }
@@ -53,34 +50,52 @@ def get_news(company: str, category: str = Query("Top"), timeframe: str = Query(
     keyword = category_keywords.get(category, "")
     time_filter = time_map.get(timeframe, "d")
 
-    # Build query
-    query = " OR ".join([f"{c} {keyword}".strip() for c in competitors])
+    # Exclude selected company
+    competitors = [c for c in MANG_FANG_COMPETITORS if c.lower() != company.lower()]
 
-    params = {
-        "q": query,
-        "tbm": "nws",
-        "api_key": SERPAPI_KEY,
-        "tbs": f"qdr:{time_filter}"
-    }
+    headlines_data = []
 
-    serp_response = requests.get("https://serpapi.com/search", params=params)
-    articles = serp_response.json().get("news_results", [])
-
-    if not articles:
-        return {"news": [], "suggestions": "[]"}
-
-    # Extract headline data with improved company detection
-    headlines_data = [
-        {
-            "company": detect_company(a),
-            "title": a.get('title', '').strip(),
-            "link": a.get('link', '#')
+    for comp in competitors:
+        query = f"{comp} {keyword}".strip()
+        params = {
+            "q": query,
+            "tbm": "nws",
+            "api_key": SERPAPI_KEY,
+            "tbs": f"qdr:{time_filter}"
         }
-        for a in articles[:8]
-        if isinstance(a, dict) and 'title' in a and 'link' in a
-    ]
 
-    # Prepare input for LLM
+        try:
+            resp = requests.get("https://serpapi.com/search", params=params)
+            articles = resp.json().get("news_results", [])
+        except Exception:
+            continue
+
+        count = 0
+        for a in articles:
+            if count >= 2:
+                break
+            if not isinstance(a, dict):
+                continue
+            title = a.get('title', '').strip()
+            link = a.get('link', '#')
+            snippet = a.get('snippet', '').strip()
+            if not title or not link:
+                continue
+            detected = detect_company(a)
+            headlines_data.append({
+                "company": detected,
+                "title": title,
+                "link": link,
+                "snippet": snippet
+            })
+            count += 1
+
+        time.sleep(0.5)  # be nice to SerpAPI
+
+    # Optional: sort for neatness
+    headlines_data.sort(key=lambda x: x["company"])
+
+    # Prompt for LLM
     headlines_text = "\n".join([f"- {item['company']}: {item['title']}" for item in headlines_data])
 
     prompt = f"""
