@@ -3,6 +3,8 @@ import axios from 'axios';
 
 function App() {
   const [selectedCompany, setSelectedCompany] = useState('Apple');
+  const [newsType, setNewsType] = useState('Top');
+  const [timeRange, setTimeRange] = useState('Past Day');
   const [news, setNews] = useState([]);
   const [suggestions, setSuggestions] = useState('');
   const [loading, setLoading] = useState(false);
@@ -11,7 +13,12 @@ function App() {
     setLoading(true);
     setSuggestions('');
     try {
-      const response = await axios.get(`http://localhost:8000/get_news/${selectedCompany}`);
+      const response = await axios.get(`http://localhost:8000/get_news/${selectedCompany}`, {
+        params: {
+          category: newsType,
+          timeframe: timeRange
+        }
+      });
       setNews(response.data.news || []);
       try {
         setSuggestions(JSON.parse(response.data.suggestions));
@@ -43,11 +50,7 @@ function App() {
           Get Latest News
         </button>
 
-        <select value={selectedCompany} onChange={e => setSelectedCompany(e.target.value)} style={{
-          padding: '8px',
-          fontSize: '16px',
-          borderRadius: '6px'
-        }}>
+        <select value={selectedCompany} onChange={e => setSelectedCompany(e.target.value)} style={{ padding: '8px', fontSize: '16px', borderRadius: '6px' }}>
           <option>Apple</option>
           <option>Meta</option>
           <option>Google</option>
@@ -55,6 +58,19 @@ function App() {
           <option>Netflix</option>
           <option>Microsoft</option>
           <option>Startup</option>
+        </select>
+
+        <select value={newsType} onChange={e => setNewsType(e.target.value)} style={{ padding: '8px', fontSize: '16px', borderRadius: '6px', marginLeft: '10px' }}>
+          <option>Top</option>
+          <option>Tech</option>
+          <option>AI</option>
+          <option>Finance</option>
+        </select>
+
+        <select value={timeRange} onChange={e => setTimeRange(e.target.value)} style={{ padding: '8px', fontSize: '16px', borderRadius: '6px', marginLeft: '10px' }}>
+          <option>Today</option>
+          <option>Past Week</option>
+          <option>Past Month</option>
         </select>
       </div>
 
@@ -72,31 +88,12 @@ function App() {
                 borderLeft: "5px solid #333"
               }}>
                 <strong>{item.company}</strong>: {item.title}
-                <a
-  href={item.link}
-  target="_blank"
-  rel="noopener noreferrer"
-  title="Open news article"
->
-  <svg
-    className="link-icon"
-    xmlns="http://www.w3.org/2000/svg"
-    width="18"
-    height="18"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M10 13a5 5 0 0 0 7.07 0l3.54-3.54a5 5 0 0 0-7.07-7.07L12 4" />
-    <path d="M14 11a5 5 0 0 0-7.07 0L3.39 14.46a5 5 0 0 0 7.07 7.07L12 20" />
-  </svg>
-</a>
-
-
-
+                <a href={item.link} target="_blank" rel="noopener noreferrer" title="Open news article">
+                  <svg className="link-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M10 13a5 5 0 0 0 7.07 0l3.54-3.54a5 5 0 0 0-7.07-7.07L12 4" />
+                    <path d="M14 11a5 5 0 0 0-7.07 0L3.39 14.46a5 5 0 0 0 7.07 7.07L12 20" />
+                  </svg>
+                </a>
               </div>
             ))}
           </div>

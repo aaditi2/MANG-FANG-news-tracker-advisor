@@ -1,9 +1,8 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 import requests
 import os
-import re
 
 # Load environment variables
 load_dotenv(dotenv_path="../.env")
@@ -24,22 +23,44 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-def detect_company(headline: str) -> str:
-    headline = headline.lower()
+def detect_company(article: dict) -> str:
+    """Checks title + snippet + link for company name match."""
+    text = f"{article.get('title', '')} {article.get('snippet', '')} {article.get('link', '')}".lower()
     for name in MANG_FANG_COMPETITORS:
-        if name.lower() in headline:
+        if name.lower() in text:
             return name
     return "Unknown"
 
 @app.get("/get_news/{company}")
-def get_news(company: str):
+def get_news(company: str, category: str = Query("Top"), timeframe: str = Query("Past Day")):
+    # Remove selected company from competitors
     competitors = [c for c in MANG_FANG_COMPETITORS if c.lower() != company.lower()]
-    query = " OR ".join(competitors) + " news"
+
+    # Optional category and time filters
+    category_keywords = {
+        "Top": "",
+        "Tech": "technology",
+        "AI": "artificial intelligence",
+        "Finance": "finance"
+    }
+
+    time_map = {
+        "Today": "t",
+        "Past Week": "w",
+        "Past Month": "m"
+    }
+
+    keyword = category_keywords.get(category, "")
+    time_filter = time_map.get(timeframe, "d")
+
+    # Build query
+    query = " OR ".join([f"{c} {keyword}".strip() for c in competitors])
 
     params = {
         "q": query,
         "tbm": "nws",
-        "api_key": SERPAPI_KEY
+        "api_key": SERPAPI_KEY,
+        "tbs": f"qdr:{time_filter}"
     }
 
     serp_response = requests.get("https://serpapi.com/search", params=params)
@@ -48,18 +69,18 @@ def get_news(company: str):
     if not articles:
         return {"news": [], "suggestions": "[]"}
 
-    # Prepare structured news
+    # Extract headline data with improved company detection
     headlines_data = [
         {
-            "company": detect_company(a.get('title', '')),
+            "company": detect_company(a),
             "title": a.get('title', '').strip(),
             "link": a.get('link', '#')
         }
-        for a in articles[:5]
+        for a in articles[:8]
         if isinstance(a, dict) and 'title' in a and 'link' in a
     ]
 
-    # Flatten news into plain text for LLM
+    # Prepare input for LLM
     headlines_text = "\n".join([f"- {item['company']}: {item['title']}" for item in headlines_data])
 
     prompt = f"""
