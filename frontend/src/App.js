@@ -3,7 +3,7 @@ import axios from 'axios';
 
 function App() {
   const [selectedCompany, setSelectedCompany] = useState('Apple');
-  const [news, setNews] = useState('');
+  const [news, setNews] = useState([]);
   const [suggestions, setSuggestions] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -12,12 +12,17 @@ function App() {
     setSuggestions('');
     try {
       const response = await axios.get(`http://localhost:8000/get_news/${selectedCompany}`);
-      setNews(response.data.news);
-      setSuggestions(response.data.suggestions);
+      setNews(response.data.news || []);
+      try {
+        setSuggestions(JSON.parse(response.data.suggestions));
+      } catch (e) {
+        console.error("Suggestion JSON parse failed:", e);
+        setSuggestions([]);
+      }
     } catch (error) {
       console.error("Error fetching news:", error);
-      setNews("⚠️ Failed to fetch news.");
-      setSuggestions('');
+      setNews([]);
+      setSuggestions([]);
     } finally {
       setLoading(false);
     }
@@ -55,52 +60,74 @@ function App() {
 
       {loading && <p>⌛ Loading...</p>}
 
-      {news && (
+      {Array.isArray(news) && news.length > 0 && (
         <div>
           <h2>📰 Competitor News</h2>
           <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-            {news.split('\n').map((line, index) => {
-              const match = line.match(/- (.*?):/);
-              const company = match ? match[1] : "Unknown";
-              const headline = line.replace(/- .*?:\s*/, '');
-              return (
-                <div key={index} style={{
-                  backgroundColor: "#f2f2f2",
-                  padding: "10px",
-                  borderRadius: "8px",
-                  borderLeft: "5px solid #333"
-                }}>
-                  <strong>{company}</strong>: {headline}
-                </div>
-              );
-            })}
+            {news.map((item, index) => (
+              <div key={index} style={{
+                backgroundColor: "#f2f2f2",
+                padding: "10px",
+                borderRadius: "8px",
+                borderLeft: "5px solid #333"
+              }}>
+                <strong>{item.company}</strong>: {item.title}
+                <a
+  href={item.link}
+  target="_blank"
+  rel="noopener noreferrer"
+  title="Open news article"
+>
+  <svg
+    className="link-icon"
+    xmlns="http://www.w3.org/2000/svg"
+    width="18"
+    height="18"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M10 13a5 5 0 0 0 7.07 0l3.54-3.54a5 5 0 0 0-7.07-7.07L12 4" />
+    <path d="M14 11a5 5 0 0 0-7.07 0L3.39 14.46a5 5 0 0 0 7.07 7.07L12 20" />
+  </svg>
+</a>
+
+
+
+              </div>
+            ))}
           </div>
         </div>
       )}
 
-      {suggestions && (
+      {suggestions && Array.isArray(suggestions) && suggestions.length > 0 && (
         <div style={{ marginTop: "30px" }}>
-          <h2>💡 Suggestions</h2>
-          <div style={{
-            backgroundColor: "#fff6e5",
-            padding: "20px",
-            borderRadius: "10px",
-            border: "1px solid #f0c36d",
-            fontFamily: "Segoe UI, sans-serif",
-            lineHeight: "1.6"
-          }}>
-            {suggestions.split("\n").map((line, index) => (
-              <div key={index}>
-                {line.startsWith("**") ? (
-                  <h3 style={{ marginTop: "20px", color: "#cc7000" }}>
-                    {line.replace(/\*\*/g, "")}
-                  </h3>
-                ) : (
-                  <p style={{ margin: "4px 0" }}>{line}</p>
-                )}
-              </div>
-            ))}
-          </div>
+          <h2>📋 Structured Strategy Table</h2>
+          <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '15px' }}>
+            <thead>
+              <tr style={{ backgroundColor: '#ffe0b3' }}>
+                <th style={{ border: '1px solid #ccc', padding: '10px' }}>Strategy</th>
+                <th style={{ border: '1px solid #ccc', padding: '10px' }}>Objective</th>
+                <th style={{ border: '1px solid #ccc', padding: '10px' }}>Action Items</th>
+              </tr>
+            </thead>
+            <tbody>
+              {suggestions.map((item, index) => (
+                <tr key={index}>
+                  <td style={{ border: '1px solid #ccc', padding: '10px' }}>{item.strategy}</td>
+                  <td style={{ border: '1px solid #ccc', padding: '10px' }}>{item.objective}</td>
+                  <td style={{ border: '1px solid #ccc', padding: '10px' }}>
+                    <ul>
+                      {item.actions.map((act, idx) => <li key={idx}>{act}</li>)}
+                    </ul>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
     </div>

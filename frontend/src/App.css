@@ -28,3 +28,14 @@ pre {
   white-space: pre-wrap;
   word-wrap: break-word;
 }
+
+.link-icon {
+  color: #1a0dab;
+  cursor: pointer;
+  vertical-align: middle;
+  transition: color 0.2s ease;
+}
+
+.link-icon:hover {
+  color: #0046c0;
+}
