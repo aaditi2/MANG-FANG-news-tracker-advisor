@@ -1,8 +1,10 @@
 # GenAI based Company news tracker and advisor
 
-
-![Made with](https://img.shields.io/badge/Made%20with-Python%20%26%20LLMs-blue)
-![License](https://img.shields.io/badge/license-MIT-green)
+![LLM](https://img.shields.io/badge/LLM-LLaMA--3-purple)
+![GenAI](https://img.shields.io/badge/Powered%20by-GenAI-white)
+![Python](https://img.shields.io/badge/Backend-Python-darkblue)
+![React](https://img.shields.io/badge/Frontend-React.js-blue)
+![License](https://img.shields.io/badge/License-MIT-lightgrey)
 
 This News Strategizer is an AI-powered assistant that helps generate strategic suggestions for any company based on real-time competitor news. It automatically fetches the latest headlines and uses a language model to provide insightful, actionable strategies.
 
@@ -11,15 +13,17 @@ This News Strategizer is an AI-powered assistant that helps generate strategic s
 ## 🚀 Features
 
 - **Live Competitor News:-** Fetches real-time news using online APIs.
-- **Company-Aware Suggestions:-** Uses custom prompt engineering to tailor recommendations
-- **LLM Powered:-** Leverages LLaMA 3 via open source API for high-quality insights
-- **Industry-Agnostic:-** Works across any industry; not limited to tech
-- **Command-Line Tool:-** Simple to run with customizable company input
+- **LLM Powered:-** Leverages LLaMA 3 via open source API for high-quality insights.
+- **Company-Aware Suggestions:-** Uses custom prompt engineering to tailor recommendations.
+- **Frontend Dashboard:-** Intuitive React.js UI with filters and split-view layout for news and strategies.
+
+
 
 ---
 
 ## 🧰 Tech Stack
 
+- **React.Js** - Frontend
 - **Python** – Project scripting and API handling
 - **SerpAPI** – For live news headlines
 - **Together API (LLaMA-3)** – Strategy generation
@@ -36,13 +40,15 @@ git clone https://github.com/aaditi2/news-strategizer.git
 cd news-strategizer
 python -m venv .venv
 source .venv/bin/activate  # or .venv\Scripts\activate on Windows
+cd backend
 pip install -r requirements.txt
 ```
 ## Output pictures
 
-![output2](https://github.com/user-attachments/assets/5cea4e59-1b7e-4e13-9c21-b79954863a19)
+![MANGFANG_advisor](https://github.com/user-attachments/assets/50ffafc1-2d45-4ea3-92b0-b4ec3941b62c)
 
-![net_and_google_output](https://github.com/user-attachments/assets/4cad0956-24d5-4be8-92ec-9357b032d071)
+![MANGFANG_advisor1](https://github.com/user-attachments/assets/8b14d18a-5352-4090-8046-42de56c85814)
 
+![MANGFANG_advisor2](https://github.com/user-attachments/assets/fadfbb87-1951-41b4-847a-f033d0682cfc)
 
 
